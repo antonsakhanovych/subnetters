@@ -3,41 +3,28 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "ipv4_subnet.h"
+#include "vector.h"
+
+VECTOR_IMPLEMENTATION(Subnetv4, 10)
+VECTOR_IMPLEMENTATION(int, 10)
 
 #define print_err(x) (fprintf(stderr, "ERROR: " x "\n"))
 
-typedef union {
-    in_addr_t full;
-    uint8_t octets[4];
-} Ipv4;
-
-/* Normalize function for convenient bit operation on IPs. 192.168.1.78
- *  would be stored in array like this: [192,168,1,78] which seems
- *  good but in memory it is layed out like this 78 1 168 192 and we
- *  cannot manipulate bits easily. This function swaps elements to
- *  this representation: 192 168 1 78 -> [78,1,168,192].
- */
-void normalize_ip(Ipv4 *ip)
+void printIntArray(int* vec, size_t size)
 {
-    for (size_t i = 0; i < 2; i++) {
-        uint8_t temp = ip->octets[i];
-        ip->octets[i] = ip->octets[3 - i];
-        ip->octets[3 - i] = temp;
+    printf("[ ");
+    for (size_t i = 0; i < size; i++) {
+        printf ("%d ", vec [i]);
     }
+    printf("]\n");
+}
+int compare_int(int i, int j)
+{
+    return i - j;
 }
 
-void printIP(const Ipv4 *ip)
-{
-    printf("----------------------\n");
-    printf("IP Address: %u.%u.%u.%u\n", ip->octets[3], ip->octets[2],
-           ip->octets[1], ip->octets[0]);
-    printf("----------------------\n");
-}
-
-uint32_t generate_cidr_mask(int cidr_mask)
-{
-    return UINT32_MAX - ((1 << (32 - cidr_mask)) - 1);
-}
+QUICKSORT_IMPLEMENTATION(int, compare_int)
 
 int main(int argc, char **argv)
 {
@@ -48,19 +35,25 @@ int main(int argc, char **argv)
     }
 
     const char *ip_addr = argv[1];
-    Ipv4 ip = {0};
-    if (!inet_pton(AF_INET, ip_addr, &ip.full)) {
+    in_addr_t ip_addr_num = 0;
+    if (!inet_pton (AF_INET, ip_addr, &ip_addr_num)) {
         print_err("Invalid ip provided.");
     }
-    normalize_ip(&ip);
 
-    int subnet_mask = atoi(argv[2]);
-    uint32_t bit_network_mask = generate_cidr_mask(subnet_mask);
-    uint32_t bit_broadcast_mask = ~bit_network_mask;
-    printIP(&ip);
-    ip.full &= bit_network_mask;
-    printIP(&ip);
-    ip.full |= bit_broadcast_mask;
-    printIP(&ip);
+    uint8_t mask = atoi (argv [2]);
+
+    Subnetv4 main_subnet = create_subnetv4(ip_addr_num, mask);
+
+    intVec subnet_sizes = create_intVec();
+
+    for(int i = 3; i < argc; i++) {
+        insert_intVec(&subnet_sizes, atoi(argv[i]));
+    }
+
+    quicksort_intVec(&subnet_sizes);
+
+    print_ipv4(&main_subnet.ip);
+
+    free(subnet_sizes.array);
     return 0;
 }
