@@ -1,1 +1,42 @@
 * Subnetters
+
+Simple program that divides given network to subnets.
+
+** Quickstart
+Compile
+#+begin_src sh
+make
+#+end_src
+
+Run
+#+begin_src sh
+./subnetters <ipv4> <cidr mask> <... list of subnet sizes/number of hosts>
+# Example
+> ./subnetters 192.168.0.0 21 167 126 120 18 9 1
+----------------------
+IP Address: 192.168.0.0
+----------------------
+----------------------
+IP Address: 192.168.1.0
+----------------------
+----------------------
+IP Address: 192.168.1.128
+----------------------
+----------------------
+IP Address: 192.168.2.0
+----------------------
+----------------------
+IP Address: 192.168.2.32
+----------------------
+----------------------
+IP Address: 192.168.2.48
+----------------------
+----------------------
+IP Address: 192.168.2.52
+----------------------
+#+end_src
+
+** Work in progress
+1. Support for ipv6
+2. Calculate broadcast address.
+3. Calculate range of host addresses

@@ -54,7 +54,7 @@ void print_ipv4(const Ipv4* ip)
 {
     printf("----------------------\n");
     printf("IP Address: ");
-    printf ("%u.%u.%u.%u", ip->octets[0], ip->octets[1], ip->octets[2], ip->octets[3]);
+    printf ("%u.%u.%u.%u", ip->octets[3], ip->octets[2], ip->octets[1], ip->octets[0]);
     printf ("\n");
     printf("----------------------\n");
 }
