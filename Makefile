@@ -3,8 +3,10 @@ CFLAGS=-Wall -Wextra --std=c99 -pedantic
 LDFLAGS=-lm
 
 
-SRC=main.c ipv4_subnet.c
+SRCDIR=src
+SRC=$(addprefix $(SRCDIR)/, main.c ipv4_subnet.c)
 OBJ=$(SRC:.c=.o)
+
 TARGET=subnetters
 
 all: $(TARGET)
@@ -12,8 +14,8 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) $(LDFLAGS) -o $@ $^
 
-%.o: %.c
+%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
 clean:
-	rm $(OBJ)
+	rm $(OBJ) $(TARGET)

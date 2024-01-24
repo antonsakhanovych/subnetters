@@ -48,7 +48,6 @@ void get_next_ip(Subnetv4* subnet, uint8_t host_bits)
     subnet_bits <<= host_bits;
     subnet->ip.addr &= ~subnet_bit_mask;
     subnet->ip.addr |= subnet_bits;
-    in_addr_t addr = subnet->ip.addr;
 }
 
 int main(int argc, char **argv)
