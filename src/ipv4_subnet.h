@@ -11,7 +11,7 @@ typedef union {
 
 typedef struct {
     Ipv4 ip;
-    in_addr_t mask;
+    uint8_t cidr_mask;
 } Subnetv4;
 
 Subnetv4 create_subnetv4(in_addr_t addr, uint8_t cidr_mask);

@@ -33,15 +33,16 @@ Subnetv4 create_subnetv4 (in_addr_t addr, uint8_t cidr_mask)
 {
     Subnetv4 subnet = {0};
     subnet.ip.addr = _normalize_ip(addr);
-    subnet.mask = generate_cidr_mask_v4(cidr_mask);
+    subnet.cidr_mask = cidr_mask;
     return subnet;
 }
 
 uint32_t calculate_size_v4 (const Subnetv4* subnet)
 {
-    in_addr_t network_addr = subnet->ip.addr & subnet->mask;
-    in_addr_t broadcast_addr = subnet->ip.addr | ~subnet->mask;
-    return broadcast_addr - network_addr;
+    in_addr_t mask = generate_cidr_mask_v4(subnet->cidr_mask);
+    in_addr_t network_addr = subnet->ip.addr & mask;
+    in_addr_t broadcast_addr = subnet->ip.addr | ~mask;
+    return broadcast_addr - network_addr + 1;
 }
 
 uint8_t get_subnet_power(int num_hosts)
